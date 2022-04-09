@@ -33,10 +33,13 @@ int main(int argc, const char *argv[])
     grootLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
     grootParser parser(&tokens);
-
     tree::ParseTree *tree = parser.prog();
-    grootVisitor *v = new visitor();
-    auto result = v->visit(tree);
+
+    std::shared_ptr<scope> top_scope = std::make_shared<scope>();
+    grootVisitor *v = new visitor(top_scope);
+    auto return_val = v->visit(tree);
+    auto result = return_val.as<value>().value;
+
     if(result.is<int>())
     {
         std::cout << result.as<int>() << std::endl;

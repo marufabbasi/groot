@@ -5,11 +5,15 @@
 #ifndef GROOT_VISITOR_H
 #define GROOT_VISITOR_H
 
+#include <memory>
 #include "parser/grootBaseVisitor.h"
+#include "scope.h"
 
 class visitor : public grootBaseVisitor
 {
 public:
+    visitor(std::shared_ptr<scope> scope);
+
     virtual antlrcpp::Any visitProgram(grootParser::ProgramContext *ctx) override;
 
     virtual antlrcpp::Any visitAtomicValueExpression(grootParser::AtomicValueExpressionContext *ctx) override;
@@ -28,7 +32,7 @@ public:
     virtual antlrcpp::Any visitReturnStatement(grootParser::ReturnStatementContext *ctx) override;
 
 private:
-    antlrcpp::Any returnValue;
+    std::shared_ptr<scope> scope_;
 };
 
 

@@ -31,7 +31,7 @@ add_executable(groot
         parser/grootVisitor.cpp
         main.cpp
         visitor.cpp
-        )
+        scope.cpp)
 
 add_dependencies(groot antlr4_static)
 target_link_libraries(groot PRIVATE antlr4_static)

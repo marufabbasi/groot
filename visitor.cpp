@@ -6,10 +6,17 @@
 
 const std::string TRUE_VALUE_STRING = "true";
 
+
+visitor::visitor(std::shared_ptr<scope> scope)
+{
+    this->scope_=scope;
+}
+
+
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
     visitChildren(ctx);
-    return returnValue;
+    return scope_->get("return");
 }
 
 antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpressionContext *ctx)
@@ -159,6 +166,8 @@ antlrcpp::Any visitor::visitPrenEnclosedExpression(grootParser::PrenEnclosedExpr
 
 antlrcpp::Any visitor::visitReturnStatement(grootParser::ReturnStatementContext *ctx)
 {
-    returnValue = visit(ctx->expr);
-    return returnValue;
+    auto result = visit(ctx->expr);
+    value val(result);
+    scope_->set("return", val);
+    return val;
 }
