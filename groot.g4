@@ -1,5 +1,7 @@
 grammar groot;
-prog: expr=expression EOL  #program;
+prog: (expression EOL | returnstmt EOL)* EOF  #program;
+
+returnstmt: 'return' expr=expression                                                        #returnStatement;
 
 expression:	left=expression op=('*'|'/') right=expression                                   #mulDivExpression
     | left=expression op=('+'|'-') right=expression                                         #addSubExpression

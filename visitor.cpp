@@ -9,11 +9,12 @@ const std::string TRUE_VALUE_STRING = "true";
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
     visitChildren(ctx);
-    return result;
+    return returnValue;
 }
 
 antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpressionContext *ctx)
 {
+    antlrcpp::Any result;
     if (ctx->atom->getType() == grootParser::INTEGER)
     {
         result = std::stoi(ctx->getText());
@@ -26,10 +27,11 @@ antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpres
     {
         auto str = ctx->atom->getText();
         assert(str.length() >= 2);
-        //no error check - eh?
-        result = str.substr(1, str.length() - 2); //copy
+        if (str.length() >= 2)
+        {
+            result = str.substr(1, str.length() - 2); //copy
+        }
     }
-
 
     return result;
 }
@@ -39,7 +41,7 @@ antlrcpp::Any visitor::visitAddSubExpression(grootParser::AddSubExpressionContex
     auto left = visit(ctx->left).as<int>();
     auto op = ctx->op->getText();
     auto right = visit(ctx->right).as<int>();
-    result = 0;
+    antlrcpp::Any result = 0;
     switch (op[0])
     {
         case '+':
@@ -60,7 +62,7 @@ antlrcpp::Any visitor::visitMulDivExpression(grootParser::MulDivExpressionContex
     auto op = ctx->op->getText();
     auto right = visit(ctx->right).as<int>();
 
-    result = 0;
+    antlrcpp::Any result = 0;
 
     switch (op[0])
     {
@@ -80,6 +82,8 @@ antlrcpp::Any visitor::visitEqualityCheckExpression(grootParser::EqualityCheckEx
     auto left = visit(ctx->left);
     auto op = ctx->op->getType();
     auto right = visit(ctx->right);
+
+    antlrcpp::Any result;
 
     if (left.isNull() || right.isNull())
     {
@@ -126,6 +130,8 @@ antlrcpp::Any visitor::visitNumericComparisonExpression(grootParser::NumericComp
     auto op = ctx->op->getType();
     auto right = visit(ctx->right).as<int>();
 
+    antlrcpp::Any result;
+
     switch (op)
     {
         case grootParser::GT:
@@ -147,6 +153,12 @@ antlrcpp::Any visitor::visitNumericComparisonExpression(grootParser::NumericComp
 
 antlrcpp::Any visitor::visitPrenEnclosedExpression(grootParser::PrenEnclosedExpressionContext *ctx)
 {
-    result = visit(ctx->expr).as<int>();
+    antlrcpp::Any result = visit(ctx->expr).as<int>();
     return result;
+}
+
+antlrcpp::Any visitor::visitReturnStatement(grootParser::ReturnStatementContext *ctx)
+{
+    returnValue = visit(ctx->expr);
+    return returnValue;
 }

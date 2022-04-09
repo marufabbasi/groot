@@ -25,8 +25,10 @@ public:
     virtual antlrcpp::Any
     visitNumericComparisonExpression(grootParser::NumericComparisonExpressionContext *ctx) override;
 
+    virtual antlrcpp::Any visitReturnStatement(grootParser::ReturnStatementContext *ctx) override;
+
 private:
-    antlrcpp::Any result; // since we do not have a way to call exit(int) yet we just return the lst calculated value
+    antlrcpp::Any returnValue;
 };
 
 
