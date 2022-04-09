@@ -39,6 +39,12 @@ antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpres
             result = str.substr(1, str.length() - 2); //copy
         }
     }
+    else if (ctx->atom->getType() == grootParser::IDENTIFIER)
+    {
+        auto var = ctx->atom->getText();
+        result = scope_->get(var).value;
+    }
+
 
     return result;
 }
@@ -169,5 +175,16 @@ antlrcpp::Any visitor::visitReturnStatement(grootParser::ReturnStatementContext 
     auto result = visit(ctx->expr);
     value val(result);
     scope_->set("return", val);
+    return val;
+}
+
+antlrcpp::Any visitor::visitAssignmentStatement(grootParser::AssignmentStatementContext *ctx)
+{
+    auto result = visit(ctx->expr);
+
+    value val(result);
+    auto var = ctx->var->getText();
+    scope_->set(var, val);
+
     return val;
 }

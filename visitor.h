@@ -31,6 +31,8 @@ public:
 
     virtual antlrcpp::Any visitReturnStatement(grootParser::ReturnStatementContext *ctx) override;
 
+    virtual antlrcpp::Any visitAssignmentStatement(grootParser::AssignmentStatementContext *ctx) override;
+
 private:
     std::shared_ptr<scope> scope_;
 };
