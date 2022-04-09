@@ -1,14 +1,27 @@
 grammar groot;
 prog: expr=expression EOL  #program;
 
-expression:	left=expression op=('*'|'/') right=expression    #mulDivExpression
-    | 	left=expression op=('+'|'-') right=expression        #addSubExpression
-    | '(' expr=expression ')'                                #prenEnclosedExpression
-    | atom=(INTEGER | BOOLEAN)                               #atomicValueExpression
+expression:	left=expression op=('*'|'/') right=expression                                   #mulDivExpression
+    | left=expression op=('+'|'-') right=expression                                         #addSubExpression
+    | left=expression op=(GT|GE|LT|LE) right=expression                                     #numericComparisonExpression
+    | left=expression op=(EQ|NE) right=expression                                           #equalityCheckExpression
+    | '(' expr=expression ')'                                                               #prenEnclosedExpression
+    | atom=(INTEGER | BOOLEAN)                                                              #atomicValueExpression
     ;
 
 NEWLINE: [\r\n]+ ;
 INTEGER: [0-9]+ ;
 BOOLEAN: 'true' | 'false';
+
+GT: '>';
+GE: '>=';
+LT: '<';
+LE: '<=';
+
+EQ: '==';
+NE: '!=';
+
 EOL: ';';
+
+
 WHITESPACE: [ \t\r\n\u000c] -> skip;
