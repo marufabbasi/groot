@@ -45,5 +45,6 @@ int main(int argc, const char *argv[])
     {
         std::cout << result.as<bool>() << std::endl;
     }
+
     return 0;
 }

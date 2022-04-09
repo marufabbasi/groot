@@ -22,6 +22,14 @@ antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpres
     {
         result = TRUE_VALUE_STRING.compare(ctx->atom->getText()) == 0;
     }
+    else if (ctx->atom->getType() == grootParser::STRING)
+    {
+        auto str = ctx->atom->getText();
+        assert(str.length() >= 2);
+        //no error check - eh?
+        result = str.substr(1, str.length() - 2); //copy
+    }
+
 
     return result;
 }
