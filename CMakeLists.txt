@@ -24,15 +24,17 @@ else()
 endif()
 
 add_executable(groot 
-    parser/grootBaseListener.cpp  
-    parser/grootLexer.cpp  
-    parser/grootListener.cpp  
-    parser/grootParser.cpp
-    parser/grootVisitor.cpp
-    main.cpp
-    )
+        parser/grootBaseListener.cpp
+        parser/grootLexer.cpp
+        parser/grootListener.cpp
+        parser/grootParser.cpp
+        parser/grootVisitor.cpp
+        main.cpp
+        visitor.cpp
+        )
 
 add_dependencies(groot antlr4_static)
 target_link_libraries(groot PRIVATE antlr4_static)
 
+configure_file(example/test.groot test.groot COPYONLY)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS groot.g4)
