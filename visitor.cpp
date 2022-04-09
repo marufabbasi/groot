@@ -4,6 +4,8 @@
 #include <iostream>
 #include "visitor.h"
 
+const std::string TRUE_VALUE_STRING = "true";
+
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
     visitChildren(ctx);
@@ -12,7 +14,15 @@ antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 
 antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpressionContext *ctx)
 {
-    result =  std::stoi(ctx->getText());
+    if(ctx->atom->getType() == grootParser::INTEGER)
+    {
+        result = std::stoi(ctx->getText());
+    }
+    else if(ctx->atom->getType() == grootParser::BOOLEAN)
+    {
+        result = TRUE_VALUE_STRING.compare(ctx->atom->getText()) == 0;
+    }
+
     return result;
 }
 

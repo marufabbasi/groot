@@ -37,6 +37,13 @@ int main(int argc, const char *argv[])
     tree::ParseTree *tree = parser.prog();
     grootVisitor *v = new visitor();
     auto result = v->visit(tree);
-    std::cout << result.as<int>() << std::endl;
+    if(result.is<int>())
+    {
+        std::cout << result.as<int>() << std::endl;
+    }
+    else if(result.is<bool>())
+    {
+        std::cout << result.as<bool>() << std::endl;
+    }
     return 0;
 }
