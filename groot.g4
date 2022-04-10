@@ -9,7 +9,7 @@ statement: assignment EOL
 ifstatement: ifblk=ifblock elseblk=elseblock?                                               #ifStatement;
 
 ifblock: 'if' '(' cond=expression ')' NEWLINE? blk=block;
-elseblock: 'else' (b=block|ib=ifblock);
+elseblock: 'else' NEWLINE? (b=block|ib=ifblock);
 
 block: '{' (statement)* '}' NEWLINE?;
 
