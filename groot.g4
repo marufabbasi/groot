@@ -1,11 +1,12 @@
 grammar groot;
-prog: (assignment EOL NEWLINE?| returnstmt EOL NEWLINE?)* EOF  #program;
+prog: (assignment EOL | returnstmt EOL)* EOF  #program;
 
 
 returnstmt: 'return' expr=expression                                                        #returnStatement;
 assignment: var=IDENTIFIER '=' expr=expression                                              #assignmentStatement;
 
-expression:	left=expression op=('*'|'/') right=expression                                   #mulDivExpression
+expression: op=(NEG|NOT) expr=expression                                                    #unaryOperationExpression
+    | left=expression op=('*'|'/') right=expression                                         #mulDivExpression
     | left=expression op=('+'|'-') right=expression                                         #addSubExpression
     | left=expression op=(GT|GE|LT|LE) right=expression                                     #numericComparisonExpression
     | left=expression op=(EQ|NE) right=expression                                           #equalityCheckExpression
@@ -27,8 +28,10 @@ LE: '<=';
 
 EQ: '==';
 NE: '!=';
+NEG: '-';
+NOT: '!';
 
-EOL: ';';
+EOL: ';' NEWLINE?;
 
 
 WHITESPACE: [ \t\r\n\u000c] -> skip;

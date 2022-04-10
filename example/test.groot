@@ -1,4 +1,6 @@
 x=3*5-1;
 y=8;
-z=x+y;
-return z;
+z=x+(-y);
+a=false;
+b = !a;
+return b;

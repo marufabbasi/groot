@@ -6,12 +6,10 @@
 
 const std::string TRUE_VALUE_STRING = "true";
 
-
 visitor::visitor(std::shared_ptr<scope> scope)
 {
-    this->scope_=scope;
+    this->scope_ = scope;
 }
-
 
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
@@ -44,7 +42,6 @@ antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpres
         auto var = ctx->atom->getText();
         result = scope_->get(var).value;
     }
-
 
     return result;
 }
@@ -187,4 +184,22 @@ antlrcpp::Any visitor::visitAssignmentStatement(grootParser::AssignmentStatement
     scope_->set(var, val);
 
     return val;
+}
+
+antlrcpp::Any visitor::visitUnaryOperationExpression(grootParser::UnaryOperationExpressionContext *ctx)
+{
+    auto op = ctx->op->getType();
+    auto result = visit(ctx->expr);
+    if (op == grootParser::NEG)
+    {
+        auto r = result.as<int>();
+        r *= -1;
+        return r;
+    }
+    else
+    {
+        auto r = result.as<bool>();
+        r = !r;
+        return r;
+    }
 }
