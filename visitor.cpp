@@ -2,6 +2,7 @@
 // Created by maruf on 4/9/22.
 //
 #include <iostream>
+#include <math.h>
 #include "visitor.h"
 
 const std::string TRUE_VALUE_STRING = "true";
@@ -202,4 +203,14 @@ antlrcpp::Any visitor::visitUnaryOperationExpression(grootParser::UnaryOperation
         r = !r;
         return r;
     }
+}
+
+antlrcpp::Any visitor::visitPowerExpression(grootParser::PowerExpressionContext *ctx)
+{
+    auto base = visit(ctx->base).as<int>();
+    auto p = visit(ctx->pow).as<int>();
+
+    auto result = pow(base, p);
+
+    return (int) result;
 }

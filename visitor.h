@@ -12,28 +12,29 @@
 class visitor : public grootBaseVisitor
 {
 public:
-    visitor(std::shared_ptr<scope> scope);
+    explicit visitor(std::shared_ptr<scope> scope);
 
-    virtual antlrcpp::Any visitProgram(grootParser::ProgramContext *ctx) override;
+    antlrcpp::Any visitProgram(grootParser::ProgramContext *ctx) override;
 
-    virtual antlrcpp::Any visitAtomicValueExpression(grootParser::AtomicValueExpressionContext *ctx) override;
+    antlrcpp::Any visitAtomicValueExpression(grootParser::AtomicValueExpressionContext *ctx) override;
 
-    virtual antlrcpp::Any visitAddSubExpression(grootParser::AddSubExpressionContext *ctx) override;
+    antlrcpp::Any visitAddSubExpression(grootParser::AddSubExpressionContext *ctx) override;
 
-    virtual antlrcpp::Any visitMulDivExpression(grootParser::MulDivExpressionContext *ctx) override;
+    antlrcpp::Any visitMulDivExpression(grootParser::MulDivExpressionContext *ctx) override;
 
-    virtual antlrcpp::Any visitPrenEnclosedExpression(grootParser::PrenEnclosedExpressionContext *ctx) override;
+    antlrcpp::Any visitPrenEnclosedExpression(grootParser::PrenEnclosedExpressionContext *ctx) override;
 
-    virtual antlrcpp::Any visitEqualityCheckExpression(grootParser::EqualityCheckExpressionContext *ctx) override;
+    antlrcpp::Any visitEqualityCheckExpression(grootParser::EqualityCheckExpressionContext *ctx) override;
 
-    virtual antlrcpp::Any
-    visitNumericComparisonExpression(grootParser::NumericComparisonExpressionContext *ctx) override;
+    antlrcpp::Any visitNumericComparisonExpression(grootParser::NumericComparisonExpressionContext *ctx) override;
 
-    virtual antlrcpp::Any visitReturnStatement(grootParser::ReturnStatementContext *ctx) override;
+    antlrcpp::Any visitReturnStatement(grootParser::ReturnStatementContext *ctx) override;
 
-    virtual antlrcpp::Any visitAssignmentStatement(grootParser::AssignmentStatementContext *ctx) override;
+    antlrcpp::Any visitAssignmentStatement(grootParser::AssignmentStatementContext *ctx) override;
 
-    virtual antlrcpp::Any visitUnaryOperationExpression(grootParser::UnaryOperationExpressionContext *ctx) override;
+    antlrcpp::Any visitUnaryOperationExpression(grootParser::UnaryOperationExpressionContext *ctx) override;
+
+    antlrcpp::Any visitPowerExpression(grootParser::PowerExpressionContext *ctx) override;
 
 private:
     std::shared_ptr<scope> scope_;

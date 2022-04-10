@@ -6,6 +6,7 @@ returnstmt: 'return' expr=expression                                            
 assignment: var=IDENTIFIER '=' expr=expression                                              #assignmentStatement;
 
 expression: op=(NEG|NOT) expr=expression                                                    #unaryOperationExpression
+    | <assoc=right> base=expression '^' pow=expression                                      #powerExpression
     | left=expression op=('*'|'/') right=expression                                         #mulDivExpression
     | left=expression op=('+'|'-') right=expression                                         #addSubExpression
     | left=expression op=(GT|GE|LT|LE) right=expression                                     #numericComparisonExpression
