@@ -1,6 +1,17 @@
 grammar groot;
-prog: (assignment EOL | returnstmt EOL)* EOF  #program;
+prog: (statement)* EOF  #program;
 
+statement: assignment EOL
+           | returnstmt EOL
+           | ifstatement NEWLINE
+           ;
+
+ifstatement: ifblk=ifblock elseblk=elseblock?                                               #ifStatement;
+
+ifblock: 'if' '(' cond=expression ')' NEWLINE? blk=block;
+elseblock: 'else' (b=block|ib=ifblock);
+
+block: '{' (statement)* '}' NEWLINE?;
 
 returnstmt: 'return' expr=expression                                                        #returnStatement;
 assignment: var=IDENTIFIER '=' expr=expression                                              #assignmentStatement;
@@ -35,4 +46,4 @@ NOT: '!';
 EOL: ';' NEWLINE?;
 
 
-WHITESPACE: [ \t\r\n\u000c] -> skip;
+WHITESPACE: [ \t\r\n\u000c]* -> skip;

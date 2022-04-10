@@ -36,6 +36,12 @@ public:
 
     antlrcpp::Any visitPowerExpression(grootParser::PowerExpressionContext *ctx) override;
 
+    antlrcpp::Any visitIfStatement(grootParser::IfStatementContext *ctx) override;
+
+    antlrcpp::Any visitIfblock(grootParser::IfblockContext *ctx) override;
+
+    antlrcpp::Any visitElseblock(grootParser::ElseblockContext *ctx) override;
+
 private:
     std::shared_ptr<scope> scope_;
 };

@@ -214,3 +214,36 @@ antlrcpp::Any visitor::visitPowerExpression(grootParser::PowerExpressionContext 
 
     return (int) result;
 }
+
+antlrcpp::Any visitor::visitIfStatement(grootParser::IfStatementContext *ctx)
+{
+    auto result = visit(ctx->ifblk);
+
+    if(!result.as<bool>())
+    {
+        result = visit(ctx->elseblk);
+    }
+    return result;
+}
+
+antlrcpp::Any visitor::visitIfblock(grootParser::IfblockContext *ctx)
+{
+    auto cond = visit(ctx->cond);
+    if (cond.as<bool>())
+    {
+        visit(ctx->blk);
+    }
+    return cond;
+}
+
+antlrcpp::Any visitor::visitElseblock(grootParser::ElseblockContext *ctx)
+{
+    if(!ctx->b->isEmpty())
+    {
+        return visit(ctx->b);
+    }
+    else if(!ctx->ib->isEmpty())
+    {
+        return visit(ctx->ib);
+    }
+}
