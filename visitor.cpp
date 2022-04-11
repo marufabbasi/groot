@@ -41,7 +41,7 @@ antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpres
     else if (ctx->atom->getType() == grootParser::IDENTIFIER)
     {
         auto var = ctx->atom->getText();
-        result = scope_->get(var).value;
+        result = scope_->get(var)->val;
     }
 
     return result;
@@ -171,7 +171,7 @@ antlrcpp::Any visitor::visitPrenEnclosedExpression(grootParser::PrenEnclosedExpr
 antlrcpp::Any visitor::visitReturnStatement(grootParser::ReturnStatementContext *ctx)
 {
     auto result = visit(ctx->expr);
-    value val(result);
+    std::shared_ptr<value> val = std::make_shared<value>(result);
     scope_->set("return", val);
     return val;
 }
@@ -180,7 +180,7 @@ antlrcpp::Any visitor::visitAssignmentStatement(grootParser::AssignmentStatement
 {
     auto result = visit(ctx->expr);
 
-    value val(result);
+    std::shared_ptr<value> val = std::make_shared<value>(result);
     auto var = ctx->var->getText();
     scope_->set(var, val);
 
@@ -219,7 +219,7 @@ antlrcpp::Any visitor::visitIfStatement(grootParser::IfStatementContext *ctx)
 {
     auto result = visit(ctx->ifblk);
 
-    if(!result.as<bool>())
+    if (!result.as<bool>() && ctx->elseblk != nullptr)
     {
         result = visit(ctx->elseblk);
     }
@@ -238,12 +238,81 @@ antlrcpp::Any visitor::visitIfblock(grootParser::IfblockContext *ctx)
 
 antlrcpp::Any visitor::visitElseblock(grootParser::ElseblockContext *ctx)
 {
-    if(!ctx->b->isEmpty())
+    if (!ctx->b->isEmpty())
     {
         return visit(ctx->b);
     }
-    else if(!ctx->ib->isEmpty())
+    else if (!ctx->ib->isEmpty())
     {
         return visit(ctx->ib);
     }
+}
+
+antlrcpp::Any visitor::visitFunctionDefStatement(grootParser::FunctionDefStatementContext *ctx)
+{
+    auto fun_def = std::make_shared<function_def>();
+    fun_def->name = ctx->name->getText();
+    fun_def->body = ctx->blk;
+
+    int parts = ctx->children.size();
+    auto first_param_index = 3;
+    auto last_param_index = parts - 2;
+
+    for (int c = first_param_index; c < last_param_index; c += 2)
+    {
+        auto param = ctx->children[c]->getText();
+        fun_def->parameters.push_back(param);
+    }
+
+    std::shared_ptr<value> val = std::make_shared<value>();
+    val->val = fun_def;
+    scope_->set(fun_def->name, val);
+
+    auto fun_def_val = scope_->get(fun_def->name);
+
+    if (fun_def_val->val.isNull())
+    {
+        return nullptr; // function not found
+    }
+
+    return val;
+}
+
+antlrcpp::Any visitor::visitFunctionCallExpression(grootParser::FunctionCallExpressionContext *ctx)
+{
+    std::string fun_name = ctx->name->getText();
+    auto fun_def_val = scope_->get(fun_name);
+
+    if (fun_def_val->val.isNull())
+    {
+        return nullptr; // function not found
+    }
+
+    auto fun_def = fun_def_val->val.as<std::shared_ptr<function_def>>();
+    auto body = fun_def->body.as<grootParser::BlockContext *>();
+
+    std::shared_ptr<scope> fun_scope = std::make_shared<scope>(scope_);
+
+    int formal_param_count = fun_def->parameters.size();
+    int parts = ctx->children.size();
+    auto first_param_index = 2;
+    auto last_param_index = parts - 1;
+
+    int actual_param_count = 0;
+    for (int c = first_param_index; c < last_param_index; c += 2)
+    {
+        auto param_name = fun_def->parameters[actual_param_count];
+        auto param = ctx->children[c];
+        auto param_val_n = visit(param).as<int>();
+        auto param_val = std::make_shared<value>(param_val_n);
+        fun_scope->set(param_name, param_val);
+        actual_param_count++;
+    }
+
+    assert(formal_param_count == actual_param_count);
+
+    scope_ = fun_scope;
+    auto return_val = visit(body);
+    scope_ = fun_scope->parent_scope_;
+    return fun_scope->get("return")->val;
 }

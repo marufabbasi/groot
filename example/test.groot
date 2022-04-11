@@ -1,12 +1,14 @@
-y=1;
+function add(a, b)
+{
+    return a+b;
+}
+
+y=add(3,8);
 x=10^2;
-if (y == 16)
+if (y == 8)
 {
-  y=15;
+  y=15*x;
 }
-else
-{
-    y=18;
-}
+
 z=x+y;
 return z;

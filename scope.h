@@ -6,33 +6,50 @@
 #define GROOT_SCOPE_H
 
 #include <iostream>
+#include <memory>
+#include <vector>
 #include <unordered_map>
+
 #include "antlr4-runtime.h"
 
-typedef struct _value
+typedef struct _function_def
 {
-    _value() { value = nullptr; }
-    _value(antlrcpp::Any val)
+    std::string name;
+    antlrcpp::Any body;
+    std::vector<std::string> parameters;
+} function_def;
+
+struct value
+{
+public:
+    value()
+    { this->val = nullptr; }
+
+    value(antlrcpp::Any val)
     {
-        value = val;
+        this->val = val;
     }
 
     int type;
-    antlrcpp::Any value;
-} value;
+    antlrcpp::Any val;
+};
+
 
 class scope
 {
 public:
+    std::shared_ptr<scope> parent_scope_;
+public:
     scope(std::shared_ptr<scope> parent = nullptr);
 
-    void set(std::string identifier, value val);
+    ~scope();
 
-    value get(std::string identifier);
+    void set(std::string identifier, std::shared_ptr<value> val);
+
+    std::shared_ptr<value> get(std::string identifier);
 
 private:
-    std::unordered_map<std::string, value> value_map_;
-    std::shared_ptr<scope> parent_scope_;
+    std::unordered_map<std::string, std::shared_ptr<value>> value_map_;
 };
 
 

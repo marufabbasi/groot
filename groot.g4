@@ -3,15 +3,19 @@ prog: (statement)* EOF  #program;
 
 statement: assignment EOL
            | returnstmt EOL
-           | ifstatement NEWLINE
+           | ifstatement
+           | funcdefstmt
+           | expression EOL
            ;
+
+funcdefstmt: 'function' name=IDENTIFIER '(' (IDENTIFIER (',' IDENTIFIER)*)? ')' blk=block  #functionDefStatement;
 
 ifstatement: ifblk=ifblock elseblk=elseblock?                                               #ifStatement;
 
-ifblock: 'if' '(' cond=expression ')' NEWLINE? blk=block;
-elseblock: 'else' NEWLINE? (b=block|ib=ifblock);
+ifblock: 'if' '(' cond=expression ')' blk=block;
+elseblock: 'else' (b=block|ib=ifblock);
 
-block: '{' (statement)* '}' NEWLINE?;
+block: '{' (statement)* '}';
 
 returnstmt: 'return' expr=expression                                                        #returnStatement;
 assignment: var=IDENTIFIER '=' expr=expression                                              #assignmentStatement;
@@ -24,9 +28,9 @@ expression: op=(NEG|NOT) expr=expression                                        
     | left=expression op=(EQ|NE) right=expression                                           #equalityCheckExpression
     | '(' expr=expression ')'                                                               #prenEnclosedExpression
     | atom=(INTEGER | BOOLEAN | STRING | IDENTIFIER)                                        #atomicValueExpression
+    | name=IDENTIFIER '(' (expression (',' expression)*)? ')'                               #functionCallExpression
     ;
 
-NEWLINE: [\r\n]+ ;
 INTEGER: [0-9]+ ;
 BOOLEAN: 'true' | 'false';
 STRING: ["] ( ~["\r\n\\] | '\\' ~[\r\n] )* ["];
@@ -43,7 +47,6 @@ NE: '!=';
 NEG: '-';
 NOT: '!';
 
-EOL: ';' NEWLINE?;
+EOL: ';';
 
-
-WHITESPACE: [ \t\r\n\u000c]* -> skip;
+WHITESPACE: [ \f\t\r\n] -> skip;

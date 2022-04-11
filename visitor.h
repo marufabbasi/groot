@@ -42,6 +42,10 @@ public:
 
     antlrcpp::Any visitElseblock(grootParser::ElseblockContext *ctx) override;
 
+    antlrcpp::Any visitFunctionDefStatement(grootParser::FunctionDefStatementContext *ctx) override;
+
+    antlrcpp::Any visitFunctionCallExpression(grootParser::FunctionCallExpressionContext *ctx) override;
+
 private:
     std::shared_ptr<scope> scope_;
 };
