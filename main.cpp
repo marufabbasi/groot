@@ -35,16 +35,14 @@ int main(int argc, const char *argv[])
 
     std::shared_ptr<scope> top_scope = std::make_shared<scope>();
     std::shared_ptr<grootVisitor> v = std::make_shared<visitor>(top_scope);
-    auto return_val = v->visit(tree);
-    auto result = return_val.as<std::shared_ptr<value>>()->val;
 
-    if (result.is<int>())
+
+    auto return_val = v->visit(tree);
+    auto result = reinterpret_cast<int_value *> (return_val.as<std::shared_ptr<value>>().get());
+
+    if (result)
     {
-        std::cout << result.as<int>() << std::endl;
-    }
-    else if (result.is<bool>())
-    {
-        std::cout << result.as<bool>() << std::endl;
+        std::cout << result->val_<< std::endl;
     }
 
     return 0;

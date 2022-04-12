@@ -4,6 +4,7 @@
 
 #include "scope.h"
 
+int gcounter = 0;
 
 scope::scope(std::shared_ptr<scope> parent)
 {
@@ -35,4 +36,16 @@ std::shared_ptr<value> scope::get(std::string identifier)
 
 scope::~scope()
 {
+}
+
+void scope::print()
+{
+    for(auto i: value_map_)
+    {
+        std::cout << i.first << " = ";
+        i.second->print();
+        std::cout << std::endl;
+    }
+
+    std::cout << "-----------------" << std::endl;
 }

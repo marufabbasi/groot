@@ -46,6 +46,8 @@ public:
 
     antlrcpp::Any visitFunctionCallExpression(grootParser::FunctionCallExpressionContext *ctx) override;
 
+    std::shared_ptr<value> getValueFrom(antlrcpp::Any val);
+
 private:
     std::shared_ptr<scope> scope_;
 };

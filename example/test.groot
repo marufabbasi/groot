@@ -1,14 +1,16 @@
-function add(a, b)
+function add(a,b)
 {
     return a+b;
 }
 
-y=add(3,8);
-x=10^2;
-if (y == 8)
-{
-  y=15*x;
-}
-
-z=x+y;
-return z;
+x=5;
+y=7;
+z=add(x,y);
+bg=x<y;
+bt=(true == true);
+bf=(true == false);
+ne=(5!=5);
+nne=(6!=7);
+z=z+10;
+p = (x+y +z) * z * 34;
+return p+2+x;
