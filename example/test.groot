@@ -6,7 +6,7 @@ function add(a,b)
 {
     return a+b;
 }
-
+c='A';
 l = [1,2,3,[4, 5, 6], 7];
 l2 = l[3];
 l3 = l2[1];

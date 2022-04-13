@@ -20,6 +20,7 @@ enum value_type: int
 {
     INTEGER,
     BOOLEAN,
+    CHARACTER,
     STRING,
     LIST,
     FUNCTION
@@ -69,6 +70,25 @@ public:
 
     bool val_;
 };
+
+class char_value : public value
+{
+public:
+    char_value() = default;
+    explicit char_value(char val)
+    {
+        val_ = val;
+        type_ = CHARACTER;
+    }
+
+    void print() override
+    {
+        std::cout << id << ": " << type_ << " => " << val_;
+    }
+
+    char val_;
+};
+
 
 class string_value : public value
 {

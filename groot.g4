@@ -27,7 +27,7 @@ expression: op=(NEG|NOT) expr=expression                                        
     | left=expression op=(GT|GE|LT|LE) right=expression                                     #numericComparisonExpression
     | left=expression op=(EQ|NE) right=expression                                           #equalityCheckExpression
     | '(' expr=expression ')'                                                               #prenEnclosedExpression
-    | atom=(INTEGER | BOOLEAN | STRING | IDENTIFIER)                                        #atomicValueExpression
+    | atom=(INTEGER | BOOLEAN | CHARACTER | STRING | IDENTIFIER)                            #atomicValueExpression
     | '[' (expression ( ',' expression )*)? ']'                                             #listValueExpression
     | var=expression ('[' expression ']')+                                                  #itemAtIndexExpression
     | name=IDENTIFIER '(' (expression (',' expression)*)? ')'                               #functionCallExpression
@@ -36,7 +36,7 @@ expression: op=(NEG|NOT) expr=expression                                        
 INTEGER: [0-9]+ ;
 BOOLEAN: 'true' | 'false';
 STRING: ["] ( ~["\r\n\\] | '\\' ~[\r\n] )* ["];
-
+CHARACTER: ['](~['\\] | '\\'['] )['];
 IDENTIFIER: [a-zA-Z_] [a-zA-Z_0-9]*;
 
 GT: '>';

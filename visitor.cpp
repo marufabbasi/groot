@@ -15,7 +15,7 @@ visitor::visitor(std::shared_ptr<scope> scope)
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
     visitChildren(ctx);
-    //scope_->print();
+    scope_->print();
     return scope_->get("return");
 }
 
@@ -31,6 +31,15 @@ antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpres
     else if (ctx->atom->getType() == grootParser::BOOLEAN)
     {
         result = std::make_shared<bool_value>(TRUE_VALUE_STRING.compare(ctx->atom->getText()) == 0);
+    }
+    else if (ctx->atom->getType() == grootParser::CHARACTER)
+    {
+        auto str = ctx->atom->getText();
+        assert(str.length() == 3);
+        if (str.length() == 3)
+        {
+            result = std::make_shared<char_value>(str[1]);
+        }
     }
     else if (ctx->atom->getType() == grootParser::STRING)
     {
