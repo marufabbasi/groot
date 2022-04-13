@@ -29,7 +29,7 @@ expression: op=(NEG|NOT) expr=expression                                        
     | '(' expr=expression ')'                                                               #prenEnclosedExpression
     | atom=(INTEGER | BOOLEAN | CHARACTER | STRING | IDENTIFIER)                            #atomicValueExpression
     | '[' (expression ( ',' expression )*)? ']'                                             #listValueExpression
-    | var=expression ('[' expression ']')+                                                  #itemAtIndexExpression
+    | var=expression ('[' idx=expression ']')                                               #itemAtIndexExpression
     | name=IDENTIFIER '(' (expression (',' expression)*)? ')'                               #functionCallExpression
     ;
 

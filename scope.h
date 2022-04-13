@@ -119,20 +119,9 @@ public:
         type_ = LIST;
     }
 
-    std::shared_ptr<value> at(std::vector<int> indexes)
+    std::shared_ptr<value> at(int index)
     {
-        antlrcpp::Any cur = this->val_;
-        std::shared_ptr<value> val;
-        for(int i: indexes)
-        {
-            val = cur.as<std::vector<std::shared_ptr<value>>>().at(i);
-            if (val->type_ == LIST)
-            {
-                cur = dynamic_cast<list_value*>(val.get())->val_;
-            }
-        }
-
-        return val;
+        return val_.at(index);
     }
 
     void print() override

@@ -15,7 +15,7 @@ visitor::visitor(std::shared_ptr<scope> scope)
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
     visitChildren(ctx);
-    scope_->print();
+    //scope_->print();
     return scope_->get("return");
 }
 
@@ -354,18 +354,9 @@ antlrcpp::Any visitor::visitItemAtIndexExpression(grootParser::ItemAtIndexExpres
     {
         return nullptr; // list not found
     }
+    auto index = dynamic_cast<int_value*> (getValueFrom(visit(ctx->idx)).get());
 
-    int startIndex = 2;
-    int endIndex = ctx->children.size();
-
-    std::vector<int> indexes;
-    for (int ci = startIndex; ci< endIndex; ci += 3)
-    {
-        auto idx = dynamic_cast<int_value*>(getValueFrom(visit(ctx->children[ci])).get());
-        indexes.push_back(idx->val_);
-    }
-
-    auto result = list->at(indexes);
+    auto result = list->at(index->val_);
 
     return result;
 }
