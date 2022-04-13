@@ -15,7 +15,7 @@ visitor::visitor(std::shared_ptr<scope> scope)
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
     visitChildren(ctx);
-    scope_->print();
+    //scope_->print();
     return scope_->get("return");
 }
 
@@ -139,6 +139,20 @@ antlrcpp::Any visitor::visitEqualityCheckExpression(grootParser::EqualityCheckEx
                 case grootParser::NE:
                     result = dynamic_cast<int_value *>(left.get())->val_ !=
                              dynamic_cast<int_value *>(right.get())->val_;
+                    break;
+            }
+        }
+        else if (left->type_ == CHARACTER && right->type_ == CHARACTER)
+        {
+            switch (op)
+            {
+                case grootParser::EQ:
+                    result = dynamic_cast<char_value *>(left.get())->val_ ==
+                             dynamic_cast<char_value *>(right.get())->val_;
+                    break;
+                case grootParser::NE:
+                    result = dynamic_cast<char_value *>(left.get())->val_ !=
+                             dynamic_cast<char_value *>(right.get())->val_;
                     break;
             }
         }
