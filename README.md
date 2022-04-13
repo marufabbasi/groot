@@ -1,4 +1,4 @@
 # groot
 Groot programming language
 
-![groot](doc/images/groot.png)
+![groot](docs/images/groot.png)
