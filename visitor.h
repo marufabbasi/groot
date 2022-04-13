@@ -52,6 +52,8 @@ public:
 
     antlrcpp::Any visitItemAtIndexExpression(grootParser::ItemAtIndexExpressionContext *ctx) override;
 
+    antlrcpp::Any visitWhileloop(grootParser::WhileloopContext *ctx) override;
+
 private:
     std::shared_ptr<scope> scope_;
 

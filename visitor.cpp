@@ -407,3 +407,15 @@ std::shared_ptr<value> visitor::getValueFrom(antlrcpp::Any val)
 
     assert(false);
 }
+
+antlrcpp::Any visitor::visitWhileloop(grootParser::WhileloopContext *ctx)
+{
+    auto cond = visit(ctx->cond);
+    while (cond.as<std::shared_ptr<bool_value>>()->val_)
+    {
+        visit(ctx->blk);
+        cond = visit(ctx->cond);
+    }
+
+    return cond;
+}

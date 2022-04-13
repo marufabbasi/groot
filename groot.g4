@@ -4,11 +4,14 @@ prog: (statement)* EOF  #program;
 statement: assignment EOL
            | returnstmt EOL
            | ifstatement
+           | whileloop
            | funcdefstmt
            | expression EOL
            ;
 
 funcdefstmt: 'function' name=IDENTIFIER '(' (IDENTIFIER (',' IDENTIFIER)*)? ')' blk=block  #functionDefStatement;
+
+whileloop: 'while' '(' cond=expression ')' blk=block;
 
 ifstatement: ifblk=ifblock elseblk=elseblock?                                               #ifStatement;
 
