@@ -15,7 +15,7 @@ visitor::visitor(std::shared_ptr<scope> scope)
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
     visitChildren(ctx);
-    //scope_->print();
+    scope_->print();
     return scope_->get("return");
 }
 
@@ -204,10 +204,10 @@ antlrcpp::Any visitor::visitReturnStatement(grootParser::ReturnStatementContext 
 
 antlrcpp::Any visitor::visitAssignmentStatement(grootParser::AssignmentStatementContext *ctx)
 {
+    auto var = ctx->var->getText();
     auto result = visit(ctx->expr);
 
     std::shared_ptr<value> val = getValueFrom(result);
-    auto var = ctx->var->getText();
     scope_->set(var, val);
     return val;
 }
@@ -335,9 +335,9 @@ antlrcpp::Any visitor::visitListValueExpression(grootParser::ListValueExpression
 {
     std::vector<std::shared_ptr<value>> listValue;
     int startIndex = 1;
-    int endIndex = ctx->children.size() -1;
+    int endIndex = ctx->children.size() - 1;
 
-    for (int ci = startIndex; ci< endIndex; ci += 2)
+    for (int ci = startIndex; ci < endIndex; ci += 2)
     {
         auto val = visit(ctx->children[ci]);
         listValue.push_back(getValueFrom(val));
@@ -348,13 +348,13 @@ antlrcpp::Any visitor::visitListValueExpression(grootParser::ListValueExpression
 
 antlrcpp::Any visitor::visitItemAtIndexExpression(grootParser::ItemAtIndexExpressionContext *ctx)
 {
-    auto list = dynamic_cast<list_value*> (getValueFrom(visit(ctx->var)).get());
+    auto list = dynamic_cast<value *> (getValueFrom(visit(ctx->var)).get());
 
     if (list == nullptr)
     {
         return nullptr; // list not found
     }
-    auto index = dynamic_cast<int_value*> (getValueFrom(visit(ctx->idx)).get());
+    auto index = dynamic_cast<int_value *> (getValueFrom(visit(ctx->idx)).get());
 
     auto result = list->at(index->val_);
 
@@ -372,6 +372,10 @@ std::shared_ptr<value> visitor::getValueFrom(antlrcpp::Any val)
     {
         return val.as<std::shared_ptr<int_value>>();
     }
+    else if (val.is<std::shared_ptr<char_value>>())
+    {
+        return val.as<std::shared_ptr<char_value>>();
+    }
     else if (val.is<std::shared_ptr<bool_value>>())
     {
         return val.as<std::shared_ptr<bool_value>>();
@@ -380,9 +384,14 @@ std::shared_ptr<value> visitor::getValueFrom(antlrcpp::Any val)
     {
         return val.as<std::shared_ptr<list_value>>();
     }
+    else if (val.is<std::shared_ptr<string_value>>())
+    {
+        return val.as<std::shared_ptr<string_value>>();
+    }
     else if (val.is<std::shared_ptr<function_value>>())
     {
         return val.as<std::shared_ptr<function_value>>();
     }
+
     assert(false);
 }

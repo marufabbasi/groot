@@ -16,7 +16,7 @@
 
 extern int gcounter;
 
-enum value_type: int
+enum value_type : int
 {
     INTEGER,
     BOOLEAN,
@@ -29,9 +29,21 @@ enum value_type: int
 class value
 {
 public:
-    value() { id = gcounter++; }
+    value()
+    { id = gcounter++; }
+
+    virtual std::shared_ptr<value> at(int index)
+    {
+        throw std::bad_typeid();
+    };
+
     value_type type_;
-    virtual void print() {}
+
+    virtual void print()
+    {
+        assert(false);
+    }
+
     int id;
 };
 
@@ -39,6 +51,7 @@ class int_value : public value
 {
 public:
     int_value() = default;
+
     explicit int_value(int val)
     {
         val_ = val;
@@ -57,6 +70,7 @@ class bool_value : public value
 {
 public:
     bool_value() = default;
+
     explicit bool_value(bool val)
     {
         val_ = val;
@@ -75,6 +89,7 @@ class char_value : public value
 {
 public:
     char_value() = default;
+
     explicit char_value(char val)
     {
         val_ = val;
@@ -94,11 +109,18 @@ class string_value : public value
 {
 public:
     string_value() = default;
+
     explicit string_value(std::string val)
     {
         val_ = std::move(val);
         type_ = STRING;
     }
+
+    virtual std::shared_ptr<value> at(int index) override
+    {
+        auto val = val_.at(index);
+        std::make_shared<char_value>(val);
+    };
 
     void print() override
     {
@@ -113,23 +135,25 @@ class list_value : public value
 {
 public:
     list_value() = default;
+
     explicit list_value(std::vector<std::shared_ptr<value>> val)
     {
         val_ = std::move(val);
         type_ = LIST;
     }
 
-    std::shared_ptr<value> at(int index)
+    std::shared_ptr<value> at(int index) override
     {
         return val_.at(index);
     }
 
     void print() override
     {
-        std::cout << id << ": " << type_ << "[" ;
-        for(auto v: val_)
+        std::cout << id << ": " << type_ << "[";
+        for (auto v: val_)
         {
-            v->print(); std::cout << ", ";
+            v->print();
+            std::cout << ", ";
         }
 
         std::cout << "]" << std::endl;
@@ -142,17 +166,18 @@ class function_value : public value
 {
 public:
     function_value() = default;
-    function_value(std::string name, grootParser::BlockContext *body,  std::vector<std::string> parameters)
+
+    function_value(std::string name, grootParser::BlockContext *body, std::vector<std::string> parameters)
     {
         name_ = std::move(name);
-        body_= body;
+        body_ = body;
         parameters_ = std::move(parameters);
         type_ = FUNCTION;
     }
 
     void print() override
     {
-        std::cout<< id << ": "  << "function " << name_ << "(...) {...}";
+        std::cout << id << ": " << "function " << name_ << "(...) {...}";
     }
 
     std::string name_;
@@ -172,6 +197,7 @@ public:
     void set(std::string identifier, std::shared_ptr<value> val);
 
     std::shared_ptr<value> get(std::string identifier);
+
     void print();
 
 private:
