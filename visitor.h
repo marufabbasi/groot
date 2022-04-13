@@ -48,12 +48,13 @@ public:
 
     std::shared_ptr<value> getValueFrom(antlrcpp::Any val);
 
+    antlrcpp::Any visitListValueExpression(grootParser::ListValueExpressionContext *ctx) override;
+
+    antlrcpp::Any visitItemAtIndexExpression(grootParser::ItemAtIndexExpressionContext *ctx) override;
+
 private:
     std::shared_ptr<scope> scope_;
 
-    antlrcpp::Any visitListValueExpression(grootParser::ListValueExpressionContext *ctx);
-
-    antlrcpp::Any visitItemAtIndexExpression(grootParser::ItemAtIndexExpressionContext *ctx);
 };
 
 

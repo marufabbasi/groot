@@ -17,4 +17,11 @@ y=7;
 p=add(x,y);
 q=2 + x * 2;
 r = sub(p,q);
-return r;
+if (r<0)
+{
+    return -r;
+}
+else
+{
+    return r;
+}

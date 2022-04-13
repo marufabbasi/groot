@@ -215,21 +215,19 @@ antlrcpp::Any visitor::visitAssignmentStatement(grootParser::AssignmentStatement
 antlrcpp::Any visitor::visitUnaryOperationExpression(grootParser::UnaryOperationExpressionContext *ctx)
 {
     auto op = ctx->op->getType();
-    auto result = visit(ctx->expr);
+    auto result = getValueFrom(visit(ctx->expr));
 
     std::shared_ptr<value> val;
 
     if (op == grootParser::NEG)
     {
-        auto r = result.as<int>();
-        r *= -1;
-        val = std::shared_ptr<int_value>(new int_value(r));
+        auto r = dynamic_cast<int_value *> (result.get());
+        val = std::make_shared<int_value>(r->val_ * -1);
     }
     else
     {
-        auto r = result.as<bool>();
-        r = !r;
-        val = std::shared_ptr<bool_value>(new bool_value(r));
+        auto r = dynamic_cast<bool_value *> (result.get());
+        val = std::make_shared<bool_value>(!r->val_);
     }
 
     return val;
@@ -247,7 +245,7 @@ antlrcpp::Any visitor::visitIfStatement(grootParser::IfStatementContext *ctx)
 {
     auto result = visit(ctx->ifblk);
 
-    if (!result.as<bool>() && ctx->elseblk != nullptr)
+    if (!result.as<std::shared_ptr<bool_value>>()->val_ && ctx->elseblk != nullptr)
     {
         result = visit(ctx->elseblk);
     }
@@ -257,7 +255,7 @@ antlrcpp::Any visitor::visitIfStatement(grootParser::IfStatementContext *ctx)
 antlrcpp::Any visitor::visitIfblock(grootParser::IfblockContext *ctx)
 {
     auto cond = visit(ctx->cond);
-    if (cond.as<bool>())
+    if (cond.as<std::shared_ptr<bool_value>>()->val_)
     {
         visit(ctx->blk);
     }
