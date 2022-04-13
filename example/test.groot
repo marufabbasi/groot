@@ -1,16 +1,18 @@
+function sub(p,q)
+{
+    return p-q;
+}
 function add(a,b)
 {
     return a+b;
 }
 
-x=5;
+l = [1,2,3,[4, 5, 6], 7];
+l2 = l[3];
+l3 = l2[1];
+x = l3 * 4;
 y=7;
-z=add(x,y);
-bg=x<y;
-bt=(true == true);
-bf=(true == false);
-ne=(5!=5);
-nne=(6!=7);
-z=z+10;
-p = (x+y +z) * z * 34;
-return p+2+x;
+p=add(x,y);
+q=2 + x * 2;
+r = sub(p,q);
+return r;

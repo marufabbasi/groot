@@ -28,6 +28,8 @@ expression: op=(NEG|NOT) expr=expression                                        
     | left=expression op=(EQ|NE) right=expression                                           #equalityCheckExpression
     | '(' expr=expression ')'                                                               #prenEnclosedExpression
     | atom=(INTEGER | BOOLEAN | STRING | IDENTIFIER)                                        #atomicValueExpression
+    | '[' (expression ( ',' expression )*)? ']'                                             #listValueExpression
+    | var=expression ('[' expression ']')+                                                  #itemAtIndexExpression
     | name=IDENTIFIER '(' (expression (',' expression)*)? ')'                               #functionCallExpression
     ;
 

@@ -50,6 +50,10 @@ public:
 
 private:
     std::shared_ptr<scope> scope_;
+
+    antlrcpp::Any visitListValueExpression(grootParser::ListValueExpressionContext *ctx);
+
+    antlrcpp::Any visitItemAtIndexExpression(grootParser::ItemAtIndexExpressionContext *ctx);
 };
 
 

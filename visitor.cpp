@@ -15,6 +15,7 @@ visitor::visitor(std::shared_ptr<scope> scope)
 antlrcpp::Any visitor::visitProgram(grootParser::ProgramContext *ctx)
 {
     visitChildren(ctx);
+    //scope_->print();
     return scope_->get("return");
 }
 
@@ -51,9 +52,9 @@ antlrcpp::Any visitor::visitAtomicValueExpression(grootParser::AtomicValueExpres
 
 antlrcpp::Any visitor::visitAddSubExpression(grootParser::AddSubExpressionContext *ctx)
 {
-    auto left_result = reinterpret_cast<int_value *>(visit(ctx->left).as<std::shared_ptr<value>>().get());
+    auto left_result = reinterpret_cast<int_value *>(getValueFrom(visit(ctx->left)).get());
     auto op = ctx->op->getText();
-    auto right_result = reinterpret_cast<int_value *>(visit(ctx->right).as<std::shared_ptr<value>>().get());
+    auto right_result = reinterpret_cast<int_value *>(getValueFrom(visit(ctx->right)).get());
     int left = left_result->val_, right = right_result->val_;
 
     int result = 0;
@@ -64,7 +65,7 @@ antlrcpp::Any visitor::visitAddSubExpression(grootParser::AddSubExpressionContex
             result = left + right;
             break;
         case '-':
-            result = left + right;
+            result = left - right;
             break;
     }
 
@@ -73,12 +74,12 @@ antlrcpp::Any visitor::visitAddSubExpression(grootParser::AddSubExpressionContex
 
 antlrcpp::Any visitor::visitMulDivExpression(grootParser::MulDivExpressionContext *ctx)
 {
-    scope_->print();
-
-    auto left_result = reinterpret_cast<int_value *>( getValueFrom(visit(ctx->left)).get());
+    auto left_result = visit(ctx->left);
+    auto right_result = visit(ctx->right);
     auto op = ctx->op->getText();
-    auto right_result = reinterpret_cast<int_value *>( getValueFrom(visit(ctx->right)).get());
-    int left = left_result->val_, right = right_result->val_;
+
+    auto left = dynamic_cast<int_value *>(getValueFrom(left_result).get())->val_;
+    auto right = dynamic_cast<int_value *>(getValueFrom(right_result).get())->val_;
 
     int result = 0;
 
@@ -92,7 +93,7 @@ antlrcpp::Any visitor::visitMulDivExpression(grootParser::MulDivExpressionContex
             break;
     }
 
-    return std::shared_ptr<int_value>(new int_value(result));;
+    return std::shared_ptr<int_value>(new int_value(result));
 }
 
 antlrcpp::Any visitor::visitEqualityCheckExpression(grootParser::EqualityCheckExpressionContext *ctx)
@@ -186,16 +187,9 @@ antlrcpp::Any visitor::visitPrenEnclosedExpression(grootParser::PrenEnclosedExpr
 antlrcpp::Any visitor::visitReturnStatement(grootParser::ReturnStatementContext *ctx)
 {
     auto result = visit(ctx->expr);
-    std::cout << "<<";
-    getValueFrom(result)->print();
-    std::cout << ">>" << std::endl;
     auto v = result.is<std::shared_ptr<int_value>>();
     auto val = getValueFrom(result);
-    std::cout << "setting ret val ";
-    val->print();
-    std::cout << std::endl;
     scope_->set("return", val);
-    scope_->print();
     return val;
 }
 
@@ -204,16 +198,8 @@ antlrcpp::Any visitor::visitAssignmentStatement(grootParser::AssignmentStatement
     auto result = visit(ctx->expr);
 
     std::shared_ptr<value> val = getValueFrom(result);
-    std::cout << "setting ";
-    val->print();
     auto var = ctx->var->getText();
     scope_->set(var, val);
-    std::cout << " -> set " << var << " = ";
-    val->print();
-    std::cout << std::endl;
-
-    scope_->print();
-
     return val;
 }
 
@@ -336,20 +322,67 @@ antlrcpp::Any visitor::visitFunctionCallExpression(grootParser::FunctionCallExpr
     return fun_scope->get("return");
 }
 
+antlrcpp::Any visitor::visitListValueExpression(grootParser::ListValueExpressionContext *ctx)
+{
+    std::vector<std::shared_ptr<value>> listValue;
+    int startIndex = 1;
+    int endIndex = ctx->children.size() -1;
+
+    for (int ci = startIndex; ci< endIndex; ci += 2)
+    {
+        auto val = visit(ctx->children[ci]);
+        listValue.push_back(getValueFrom(val));
+    }
+
+    return std::make_shared<list_value>(listValue);
+}
+
+antlrcpp::Any visitor::visitItemAtIndexExpression(grootParser::ItemAtIndexExpressionContext *ctx)
+{
+    auto list = dynamic_cast<list_value*> (getValueFrom(visit(ctx->var)).get());
+
+    if (list == nullptr)
+    {
+        return nullptr; // list not found
+    }
+
+    int startIndex = 2;
+    int endIndex = ctx->children.size();
+
+    std::vector<int> indexes;
+    for (int ci = startIndex; ci< endIndex; ci += 3)
+    {
+        auto idx = dynamic_cast<int_value*>(getValueFrom(visit(ctx->children[ci])).get());
+        indexes.push_back(idx->val_);
+    }
+
+    auto result = list->at(indexes);
+
+    return result;
+}
+
+
 std::shared_ptr<value> visitor::getValueFrom(antlrcpp::Any val)
 {
     if (val.is<std::shared_ptr<value>>())
     {
         return val.as<std::shared_ptr<value>>();
     }
-    if (val.is<std::shared_ptr<int_value>>())
+    else if (val.is<std::shared_ptr<int_value>>())
     {
-        return std::shared_ptr<value>(new int_value(val.as<std::shared_ptr<int_value>>()->val_));
+        return val.as<std::shared_ptr<int_value>>();
     }
-    if (val.is<std::shared_ptr<bool_value>>())
+    else if (val.is<std::shared_ptr<bool_value>>())
     {
-        return std::shared_ptr<value>(new bool_value(val.as<std::shared_ptr<bool_value>>()->val_));
+        return val.as<std::shared_ptr<bool_value>>();
     }
-
+    else if (val.is<std::shared_ptr<list_value>>())
+    {
+        return val.as<std::shared_ptr<list_value>>();
+    }
+    else if (val.is<std::shared_ptr<function_value>>())
+    {
+        return val.as<std::shared_ptr<function_value>>();
+    }
     assert(false);
 }

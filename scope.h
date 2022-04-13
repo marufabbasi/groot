@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <memory>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 
@@ -20,6 +21,7 @@ enum value_type: int
     INTEGER,
     BOOLEAN,
     STRING,
+    LIST,
     FUNCTION
 };
 
@@ -35,8 +37,8 @@ public:
 class int_value : public value
 {
 public:
-    int_value() {}
-    int_value(int val)
+    int_value() = default;
+    explicit int_value(int val)
     {
         val_ = val;
         type_ = INTEGER;
@@ -53,8 +55,8 @@ public:
 class bool_value : public value
 {
 public:
-    bool_value() {}
-    bool_value(bool val)
+    bool_value() = default;
+    explicit bool_value(bool val)
     {
         val_ = val;
         type_ = BOOLEAN;
@@ -71,10 +73,10 @@ public:
 class string_value : public value
 {
 public:
-    string_value() {}
-    string_value(std::string val)
+    string_value() = default;
+    explicit string_value(std::string val)
     {
-        val_ = val;
+        val_ = std::move(val);
         type_ = STRING;
     }
 
@@ -86,18 +88,58 @@ public:
     std::string val_;
 };
 
+
+class list_value : public value
+{
+public:
+    list_value() = default;
+    explicit list_value(std::vector<std::shared_ptr<value>> val)
+    {
+        val_ = std::move(val);
+        type_ = LIST;
+    }
+
+    std::shared_ptr<value> at(std::vector<int> indexes)
+    {
+        antlrcpp::Any cur = this->val_;
+        std::shared_ptr<value> val;
+        for(int i: indexes)
+        {
+            val = cur.as<std::vector<std::shared_ptr<value>>>().at(i);
+            if (val->type_ == LIST)
+            {
+                cur = dynamic_cast<list_value*>(val.get())->val_;
+            }
+        }
+
+        return val;
+    }
+
+    void print() override
+    {
+        std::cout << id << ": " << type_ << "[" ;
+        for(auto v: val_)
+        {
+            v->print(); std::cout << ", ";
+        }
+
+        std::cout << "]" << std::endl;
+    }
+
+    std::vector<std::shared_ptr<value>> val_;
+};
+
 class function_value : public value
 {
 public:
-    function_value() {}
+    function_value() = default;
     function_value(std::string name, grootParser::BlockContext *body,  std::vector<std::string> parameters)
     {
-        name_ = name;
+        name_ = std::move(name);
         body_= body;
-        parameters_ = parameters;
+        parameters_ = std::move(parameters);
         type_ = FUNCTION;
     }
-
 
     void print() override
     {
@@ -105,7 +147,7 @@ public:
     }
 
     std::string name_;
-    grootParser::BlockContext *body_; //lifetime is managed by parser
+    grootParser::BlockContext *body_{}; //lifetime is managed by parser
     std::vector<std::string> parameters_;
 };
 
@@ -114,7 +156,7 @@ class scope
 public:
     std::shared_ptr<scope> parent_scope_;
 public:
-    scope(std::shared_ptr<scope> parent = nullptr);
+    explicit scope(std::shared_ptr<scope> parent = nullptr);
 
     ~scope();
 
