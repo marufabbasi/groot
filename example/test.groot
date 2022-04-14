@@ -1,3 +1,5 @@
+native print(value);
+
 function sub(p,q)
 {
     return p-q;
@@ -9,6 +11,7 @@ function add(a,b)
 }
 
 s="hello";
+print(s);
 c='A';
 d=s[1];
 l = [1,2,3,[4, 5, 6], 7];

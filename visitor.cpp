@@ -3,7 +3,9 @@
 //
 #include <iostream>
 #include <math.h>
+#include <string>
 #include "visitor.h"
+#include "native_method.h"
 
 const std::string TRUE_VALUE_STRING = "true";
 
@@ -303,7 +305,15 @@ antlrcpp::Any visitor::visitFunctionDefStatement(grootParser::FunctionDefStateme
         parameters.push_back(param);
     }
 
-    auto fun_def = std::make_shared<function_value>(name, ctx->blk, parameters);
+    auto ftype =  VIRTUAL;
+
+    if(0 == std::string("native").compare(ctx->ftype->getText()))
+    {
+        ftype = NATIVE;
+    }
+
+    auto body = ctx->blk;
+    auto fun_def = std::make_shared<function_value>(name, body, parameters, ftype);
     scope_->set(name, fun_def);
 
     return fun_def;
@@ -315,8 +325,6 @@ antlrcpp::Any visitor::visitFunctionCallExpression(grootParser::FunctionCallExpr
     function_value *fun_def = static_cast<function_value *>(scope_->get(fun_name).get());
 
     //todo: check if function was found
-
-    auto body = fun_def->body_;
 
     std::shared_ptr<scope> fun_scope = std::make_shared<scope>(scope_);
 
@@ -338,7 +346,16 @@ antlrcpp::Any visitor::visitFunctionCallExpression(grootParser::FunctionCallExpr
     assert(formal_param_count == actual_param_count);
 
     scope_ = fun_scope;
-    auto return_val = visit(body);
+    if(fun_def->is_native())
+    {
+        native_method nm;
+        nm.execute(fun_name, scope_);
+    }
+    else
+    {
+        auto body = fun_def->body_;
+        auto return_val = visit(body);
+    }
     scope_ = fun_scope->parent_scope_;
     return fun_scope->get("return");
 }

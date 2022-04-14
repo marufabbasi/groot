@@ -9,7 +9,7 @@ statement: assignment EOL
            | expression EOL
            ;
 
-funcdefstmt: 'function' name=IDENTIFIER '(' (IDENTIFIER (',' IDENTIFIER)*)? ')' blk=block  #functionDefStatement;
+funcdefstmt: ftype=('native'|'function') name=IDENTIFIER '(' (IDENTIFIER (',' IDENTIFIER)*)? ')' (EOL| blk=block)  #functionDefStatement;
 
 whileloop: 'while' '(' cond=expression ')' blk=block;
 

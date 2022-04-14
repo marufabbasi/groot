@@ -26,6 +26,15 @@ enum value_type : int
     FUNCTION
 };
 
+
+enum function_type : int
+{
+    VIRTUAL,
+    STATIC,
+    SPECIAL,
+    NATIVE
+};
+
 class value
 {
 public:
@@ -167,12 +176,14 @@ class function_value : public value
 public:
     function_value() = default;
 
-    function_value(std::string name, grootParser::BlockContext *body, std::vector<std::string> parameters)
+    function_value(std::string name, grootParser::BlockContext *body, std::vector<std::string> parameters, function_type ft=VIRTUAL)
     {
+        assert(ft!=NATIVE || body == nullptr);
         name_ = std::move(name);
         body_ = body;
         parameters_ = std::move(parameters);
         type_ = FUNCTION;
+        function_type_ = ft;
     }
 
     void print() override
@@ -180,8 +191,14 @@ public:
         std::cout << id << ": " << "function " << name_ << "(...) {...}";
     }
 
+    bool is_native()
+    {
+        return function_type_ == NATIVE;
+    }
+
+    function_type function_type_;
     std::string name_;
-    grootParser::BlockContext *body_{}; //lifetime is managed by parser
+    grootParser::BlockContext *body_{}; //lifefunction_type function_type_;time is managed by parser
     std::vector<std::string> parameters_;
 };
 
