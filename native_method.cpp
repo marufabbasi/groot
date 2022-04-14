@@ -12,6 +12,10 @@ void print(std::shared_ptr<scope> s)
 
 int native_method::execute(std::string name, std::shared_ptr<scope> s)
 {
-    print(s);
+    if(std::string("print").compare(name) == 0)
+    {
+        print(s);
+    }
+
     return 0;
 }
