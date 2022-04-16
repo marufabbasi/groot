@@ -2,7 +2,14 @@
 
 We will be using Ubuntu 20.04 for our development and following is the list of dependencies we will need.
 
-We will be using a folder named ```grootlang``` for this tutorial.
+Technically it is possible to use another operating system like OSX or even Windows, but we are not focusing on that
+at the moment. You are welcome to try those or you may use Oracle VirtualBox and install  Ubuntu 20.04 to make it easy
+to follow. Download virtualbox from: https://www.virtualbox.org/wiki/Downloads and then download Ubuntu 20.04 desktop
+image from https://ubuntu.com/download/desktop and create a virtual machine in the VirtualBox.
+
+Once your OS is ready we start by creating a project directory.
+
+We will be using a folder named ```grootlang``` for this bootcamp.
 
 ```shell
 mkdir grootlang
@@ -72,6 +79,7 @@ git clone https://github.com/marufabbasi/antlr4
 cd antlr4/runtime/Cpp
 mkdir build
 cd build
+sudo apt install uuid-dev
 cmake ..
 make
 sudo make install
