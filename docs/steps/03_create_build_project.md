@@ -28,9 +28,6 @@ add_executable(groot
         parser/grootParser.cpp
         parser/grootVisitor.cpp
         main.cpp
-        visitor.cpp
-        scope.cpp
-        native_method.cpp
         )
 
 add_dependencies(groot antlr4_static)

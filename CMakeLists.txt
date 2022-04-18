@@ -4,7 +4,6 @@ project(groot)
 SET(CMAKE_CXX_STANDARD 14)
 
 find_package(antlr4-runtime REQUIRED)
-find_package(antlr4-generator REQUIRED)
 find_package(Catch2 3 REQUIRED)
 
 set(ANTLR4CPP_JAR_LOCATION ${PROJECT_SOURCE_DIR}/antlr/antlr-4.9.3-complete.jar)

@@ -30,10 +30,10 @@ expression: op=(NEG|NOT) expr=expression                                        
     | left=expression op=(GT|GE|LT|LE) right=expression                                     #numericComparisonExpression
     | left=expression op=(EQ|NE) right=expression                                           #equalityCheckExpression
     | '(' expr=expression ')'                                                               #prenEnclosedExpression
-    | atom=(INTEGER | BOOLEAN | CHARACTER | STRING | IDENTIFIER)                            #atomicValueExpression
     | '[' (expression ( ',' expression )*)? ']'                                             #listValueExpression
     | var=expression ('[' idx=expression ']')                                               #itemAtIndexExpression
     | name=IDENTIFIER '(' (expression (',' expression)*)? ')'                               #functionCallExpression
+    | atom=(INTEGER | BOOLEAN | CHARACTER | STRING | IDENTIFIER)                            #atomicValueExpression
     ;
 
 INTEGER: [0-9]+ ;
