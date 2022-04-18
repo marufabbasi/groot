@@ -94,7 +94,7 @@ cd grootlang
 git clone https://github.com/marufabbasi/Catch2.git
 cd Catch2
 mkdir build
-
+cd build
 cmake ..
 make
 sudo make install
