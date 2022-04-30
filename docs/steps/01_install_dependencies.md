@@ -77,8 +77,8 @@ We will be using ```git checkout e4c1a74c66bd5290364ea2b36c97cd724b247357``` to 
 ```shell
 cd grootlang
 git clone https://github.com/marufabbasi/antlr4
-git checkout e4c1a74c66bd5290364ea2b36c97cd724b247357
 cd antlr4/runtime/Cpp
+git checkout e4c1a74c66bd5290364ea2b36c97cd724b247357
 mkdir build
 cd build
 sudo apt install uuid-dev
