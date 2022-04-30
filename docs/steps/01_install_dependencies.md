@@ -80,7 +80,7 @@ cd antlr4/runtime/Cpp
 mkdir build
 cd build
 sudo apt install uuid-dev
-cmake ..
+cmake -DANTLR4_INSTALL=1 ..
 make
 sudo make install
 ```
