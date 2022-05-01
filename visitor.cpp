@@ -220,7 +220,7 @@ antlrcpp::Any visitor::visitReturnStatement(grootParser::ReturnStatementContext 
 
 antlrcpp::Any visitor::visitAssignmentStatement(grootParser::AssignmentStatementContext *ctx)
 {
-    auto var = ctx->var->getText();
+    auto var = ctx->var_name->getText();
     auto result = visit(ctx->expr);
 
     std::shared_ptr<value> val = getValueFrom(result);
@@ -377,7 +377,7 @@ antlrcpp::Any visitor::visitListValueExpression(grootParser::ListValueExpression
 
 antlrcpp::Any visitor::visitItemAtIndexExpression(grootParser::ItemAtIndexExpressionContext *ctx)
 {
-    auto list = dynamic_cast<value *> (getValueFrom(visit(ctx->var)).get());
+    auto list = dynamic_cast<value *> (getValueFrom(visit(ctx->var_name)).get());
 
     if (list == nullptr)
     {
@@ -435,4 +435,10 @@ antlrcpp::Any visitor::visitWhileloop(grootParser::WhileloopContext *ctx)
     }
 
     return cond;
+}
+
+antlrcpp::Any visitor::visitImportStatement(grootParser::ImportStatementContext *ctx)
+{
+    std::cout << " IMPORTING " << ctx->name->getText() << " AS " << ((ctx->alias) ? ctx->alias->getText() : " identity ") << std::endl;
+    return grootBaseVisitor::visitImportStatement(ctx);
 }

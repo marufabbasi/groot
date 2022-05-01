@@ -6,8 +6,11 @@ statement: assignment EOL
            | ifstatement
            | whileloop
            | funcdefstmt
+           | importStatement EOL
            | expression EOL
            ;
+
+importStatement: 'import' name=IMPORT_PATH ('as' alias=IDENTIFIER)?;
 
 funcdefstmt: ftype=('native'|'function') name=IDENTIFIER '(' (IDENTIFIER (',' IDENTIFIER)*)? ')' (EOL| blk=block)  #functionDefStatement;
 
@@ -21,7 +24,7 @@ elseblock: 'else' (b=block|ib=ifblock);
 block: '{' (statement)* '}';
 
 returnstmt: 'return' expr=expression                                                        #returnStatement;
-assignment: var=IDENTIFIER '=' expr=expression                                              #assignmentStatement;
+assignment: var_name=IDENTIFIER '=' expr=expression                                              #assignmentStatement;
 
 expression: op=(NEG|NOT) expr=expression                                                    #unaryOperationExpression
     | <assoc=right> base=expression '^' pow=expression                                      #powerExpression
@@ -31,7 +34,7 @@ expression: op=(NEG|NOT) expr=expression                                        
     | left=expression op=(EQ|NE) right=expression                                           #equalityCheckExpression
     | '(' expr=expression ')'                                                               #prenEnclosedExpression
     | '[' (expression ( ',' expression )*)? ']'                                             #listValueExpression
-    | var=expression ('[' idx=expression ']')                                               #itemAtIndexExpression
+    | var_name=expression ('[' idx=expression ']')                                               #itemAtIndexExpression
     | name=IDENTIFIER '(' (expression (',' expression)*)? ')'                               #functionCallExpression
     | atom=(INTEGER | BOOLEAN | CHARACTER | STRING | IDENTIFIER)                            #atomicValueExpression
     ;
@@ -41,6 +44,7 @@ BOOLEAN: 'true' | 'false';
 STRING: ["] ( ~["\r\n\\] | '\\' ~[\r\n] )* ["];
 CHARACTER: ['](~['\\] | '\\'['] )['];
 IDENTIFIER: [a-zA-Z_] [a-zA-Z_0-9]*;
+IMPORT_PATH: [a-zA-Z_] [a-zA-Z_0-9.]*;
 
 GT: '>';
 GE: '>=';

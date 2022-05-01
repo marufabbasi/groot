@@ -54,6 +54,9 @@ public:
 
     antlrcpp::Any visitWhileloop(grootParser::WhileloopContext *ctx) override;
 
+
+    antlrcpp::Any visitImportStatement(grootParser::ImportStatementContext *ctx) override;
+
 private:
     std::shared_ptr<scope> scope_;
 
