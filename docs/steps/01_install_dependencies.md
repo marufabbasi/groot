@@ -72,15 +72,17 @@ sudo apt install cmake
 
 ### Antlr4 C++ runtime
 Antlr4 C++ runtime is part of antlr4 repository. To have a stable version I have forked it. Use following to clone and install it.
+We will be using ```git checkout e4c1a74c66bd5290364ea2b36c97cd724b247357``` to checkot correct version.
 
 ```shell
 cd grootlang
 git clone https://github.com/marufabbasi/antlr4
 cd antlr4/runtime/Cpp
+git checkout e4c1a74c66bd5290364ea2b36c97cd724b247357
 mkdir build
 cd build
 sudo apt install uuid-dev
-cmake ..
+cmake -DANTLR4_INSTALL=1 ..
 make
 sudo make install
 ```
