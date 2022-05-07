@@ -9,6 +9,8 @@
 #include "parser/grootParser.h"
 #include "parser/grootBaseVisitor.h"
 #include "visitor.h"
+#include "parser/grootBaseListener.h"
+#include "grootListenerImpl.h"
 
 using namespace antlr4;
 
@@ -33,17 +35,8 @@ int main(int argc, const char *argv[])
     grootParser parser(&tokens);
     tree::ParseTree *tree = parser.prog();
 
-    std::shared_ptr<scope> top_scope = std::make_shared<scope>();
-    std::shared_ptr<grootVisitor> v = std::make_shared<visitor>(top_scope);
-
-
-    auto return_val = v->visit(tree);
-    auto result = reinterpret_cast<int_value *> (return_val.as<std::shared_ptr<value>>().get());
-
-    if (result)
-    {
-        std::cout << result->val_<< std::endl;
-    }
+    auto listener = std::make_shared<grootListenerImpl>();
+    tree::ParseTreeWalker::DEFAULT.walk(listener.get(), tree);
 
     return 0;
 }

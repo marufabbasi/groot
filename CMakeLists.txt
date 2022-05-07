@@ -36,7 +36,8 @@ add_executable(groot
         visitor.cpp
         scope.cpp
         native_method.cpp
-        jit/jit.cpp)
+        grootListenerImpl.cpp
+        )
 
 add_dependencies(groot antlr4_static)
 

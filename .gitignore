@@ -33,4 +33,6 @@
 
 parser/
 build/
+.idea/
+cmake-build-debug/
 
