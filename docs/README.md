@@ -1,10 +1,8 @@
 # Groot language
 
-Source on github: https://github.com/marufabbasi/groot/
+![Groot!](images/groot.png "Groot")
 
 Groot programming language
-
-![Groot!](images/groot.png "Groot")
 
 Groot is a "Turing Complete" programming language that has an interpreter written in C++ aimed to be used as a learning tool for students of 
 Compiler Construction in Computer Science curriculum.
